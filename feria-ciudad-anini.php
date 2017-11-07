@@ -10,7 +10,10 @@
   */
 
     define("ABS_PATH", dirname(__FILE__));
-	require_once dirname(__FILE__) . '/excel.php';
+    require_once dirname(__FILE__) . '/excel.php';
+    require_once dirname(__FILE__) . '/contrato.php';
+    require_once dirname(__FILE__) . '/expositor.php';
+    require_once dirname(__FILE__) . '/pagos.php';
 
     //Registrar el shortcode, primero va el nombre y luego el nombre de la función
     add_shortcode('tabla1', 'generar_tabla1');
