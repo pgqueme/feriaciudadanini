@@ -127,6 +127,27 @@
         ->setCellValue('AE25', $responsable['wpcf-ciudad-responsable'][0])
         ->setCellValue('AK25', $responsable['wpcf-pais-responsable'][0]);
 
+        //Llenar de datos de Organizador
+        $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A52', $organizador['wpcf-empresa'][0])
+        ->setCellValue('V52', $organizador['wpcf-direccion'][0])
+        ->setCellValue('A54', $organizador['wpcf-ciudad'][0])
+        ->setCellValue('H54', $organizador['wpcf-pais'][0])
+        ->setCellValue('N54', $organizador['wpcf-telefono_empresa'][0])
+        ->setCellValue('T54', $organizador['wpcf-email_empresa'][0])
+        ->setCellValue('AF54', $organizador['wpcf-website'][0])
+        ->setCellValue('A56', $organizador['wpcf-nombre_completo_organizador'][0])
+        ->setCellValue('V56', $organizador['wpcf-cargo'][0])
+        ->setCellValue('AD56', $organizador['wpcf-email_persona'][0])
+        ->setCellValue('A58', $organizador['wpcf-tipo_documento'][0])
+        ->setCellValue('J58', $organizador['wpcf-numero_documento'][0])
+        ->setCellValue('O58', $organizador['wpcf-movil'][0])
+        ->setCellValue('S58', $organizador['wpcf-telefono_persona'][0])
+        ->setCellValue('AG58', $organizador['wpcf-recinto_ferial'][0])
+        ->setCellValue('A61', $representante_legal['wpcf-nombre-completo_representante'][0])
+        ->setCellValue('S61', $organizador['wpcf-nombre_completo_organizador'][0])
+        ->setCellValue('AK61', 'Guatemala');
+
         $precioM2 = $feria['wpcf-precio_metro_cuadrado'][0];
         $precioTicket = $feria['wpcf-precio_ticket'][0];
         $tipoCambio = $feria['wpcf-tipo_cambio'][0];
@@ -183,6 +204,6 @@
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $fileType);
         $objWriter->save('/home2/anini/' . $rutaArchivo);
 
-        return $organizador;
-        //return 'http://' . $rutaArchivo;
+        //return $organizador;
+        return 'http://' . $rutaArchivo;
     }
