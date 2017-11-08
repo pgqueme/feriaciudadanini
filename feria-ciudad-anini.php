@@ -17,10 +17,9 @@
 
     //Registrar el shortcode, primero va el nombre y luego el nombre de la función
     add_shortcode('tabla1', 'generar_tabla1');
-	add_shortcode('tabla_contrato_vendedor', 'generar_contrato_vendedor');
+	  add_shortcode('tabla_contrato_vendedor', 'generar_contrato_vendedor');
     add_shortcode('tabla_contrato_stand', 'generar_contrato_stand');
     add_shortcode('tabla_contrato_representante', 'generar_contrato_representante');
-
 
     function generar_tabla1($attributes) {
         //Array que va a contener todos los registros
@@ -62,9 +61,6 @@
 
         return $output;
     }
-
-
-
 
 	//----CONTRATO RELACIONADO VENDEDORES
 	 function generar_contrato_vendedor($attributes) {
@@ -189,18 +185,6 @@
     }
 
 //--------- FIN  CONTRATO RELACIONADO REPRESENTANTE LEGAL
-
-
-
-
-
-
-
-
-
-
-
-
 
     function generar_contrato_stand($attributes) {
 
