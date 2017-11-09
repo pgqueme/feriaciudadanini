@@ -1,0 +1,33 @@
+Salones:
+wpcf-nombre_salones: Salón 2<br/>
+wpcf-metros_largo: 20
+wpcf-metros_ancho: 20
+_wpcf_belongs_feria_id: 15
+
+Stand:
+wpcf-numero_stands: 1
+wpcf-x: 0
+wpcf-y: 0
+_wpcf_belongs_contratos_id: 493
+_wpcf_belongs_salon_id: 517
+
+Contrato:
+wpcf-nombre-cenefa: CENEFA 502
+wpcf-porcentaje-de-descuento: 10
+wpcf-observaciones:
+_wpcf_belongs_feria_id: 15
+_wpcf_belongs_vendedor_id: 260
+_wpcf_belongs_expositor_id: 50
+
+Feria:
+wpcf-anio: 2017
+wpcf-tipo_cambio: 7.50
+wpcf-nombre_recinto: Parque de la Industria
+wpcf-precio_metro_cuadrado: 144.444444
+wpcf-precio_ticket: 25
+_wpcf_belongs_organizadores_id: 21
+
+Vendedor:
+wpcf-correo: pedro@gmail.com
+wpcf-nombre_completo_vendedores: Pedro Daniel
+wpcf-telefono_vendedor: 5577104
