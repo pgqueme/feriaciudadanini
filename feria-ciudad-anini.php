@@ -139,8 +139,9 @@
         $feria_id = $data_contrato['_wpcf_belongs_feria_id'][0];
         $feria = get_from_table('feria', $feria_id);
         if(!validate_null('Feria ' . $feria_id . ' no existe', $feria)){
+          $porcentaje_descuento = (100 - $data_contrato['wpcf-porcentaje-de-descuento'][0])/100.00;
           $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
-          $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0];
+          $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0] * $porcentaje_descuento;
         }
 
         //Alimentar la tabla
