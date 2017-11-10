@@ -124,6 +124,7 @@
                 }
               }
               array_splice($stands, $j, 1);
+              $length_stands--;
           }
         }
 
@@ -138,18 +139,22 @@
         //Obtener Precios de Ventas
         $feria_id = $data_contrato['_wpcf_belongs_feria_id'][0];
         $feria = get_from_table('feria', $feria_id);
+        $tipo_de_cambio;
+        $precio_metro_cuadrado;
         if(!validate_null('Feria ' . $feria_id . ' no existe', $feria)){
           $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
           $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0];
         }
+
+        $m2_stand = 9;
 
         //Alimentar la tabla
         for($k = 0; $k < $length_stands_cont; $k++){
           $output = $output . '<tr><td>' . $contrato_id . '</td><td>' . $data_contrato['wpcf-nombre-cenefa'][0]
           . '</td><td>' . $stands_contrato[$k][0] . '</td><td>' . $stands_contrato[$k][1] . '</td><td>' . $stands_contrato[$k][2] .'</td><td>' . $numero_stand
           . '</td><td>' . $vendedor_name
-          . '</td><td>' . $precio_metro_cuadrado * $tipo_de_cambio . '</td><td>' . $precio_metro_cuadrado
-          . '</td><td>' . $stands_contrato[$k][0] * $precio_metro_cuadrado * $tipo_de_cambio . '</td><td>' . $stands_contrato[$k][0] * $precio_metro_cuadrado
+          . '</td><td>' . $precio_metro_cuadrado * $tipo_de_cambio * $m2_stand . '</td><td>' . $precio_metro_cuadrado * $m2_stand
+          . '</td><td>' . $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado * $tipo_de_cambio . '</td><td>' . $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado
           . '</td></tr>';
         }
       }
