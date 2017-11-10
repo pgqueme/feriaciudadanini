@@ -160,6 +160,118 @@
       return $output;
     }
 
+    function generar_contrato_pagos($attributes){
+      $contratos_stand = [];
+      $stands = []; //Arreglo auxiliar que va a almacenar temporalmente el listado de stands
+
+      //Texto HTML que se va a mostrar en la página
+      $output = '
+          <table style="width: 100%">
+              <tr>
+                  <th> </th>
+                  <th colspan="2">POSTFECHADOS</th>
+                  <th colspan="3">PRIMER PAGO</th>
+                  <th colspan="3">SEGUNDO PAGO</th>
+                  <th colspan="3">TERCER PAGO</th>
+                  <th> </th>
+              </tr>
+              <tr>
+                  <th>Contrato</th>
+                  <th>Fecha</th>
+                  <th>Valor</th>
+                  <th>Recibo</th>
+                  <th>Fecha Deposito</th>
+                  <th>Valor</th>
+                  <th>Recibo</th>
+                  <th>Fecha Deposito</th>
+                  <th>Valor</th>
+                  <th>Recibo</th>
+                  <th>Fecha Deposito</th>
+                  <th>Valor</th>
+                  <th>Por Cobrar</th>
+              </tr>
+      ';
+
+      //Obtener tablas
+      $contratos = get_table('contratos', 'publish', -1);
+      $pagos = get_table('pago', 'publish', -1);
+      $stands = get_table('stand', 'publish', -1);
+
+      $length_contratos = count($contratos);
+      $length_pagos = count($pagos);
+      $length_stands = count($stands);
+
+      //Llenar tabla Contrato-Pagos
+      for($i = 0; $i < $length_contratos; $i++){
+        $contrato_id = $contratos[$i][0];
+        $data_contrato = $contratos[$i][1];
+
+        $pagos_contrato = array(); //Arreglo que lleva control de cuantos pagos posee el contrato
+        $total_pagado = 0;
+        for($j = 0; $j < $length_pagos; $j++){
+          //Obtener numero de pago
+          $data_pago = $pagos[$j][1];
+          if($data_pago['_wpcf_belongs_contratos_id'][0] == $contrato_id) {
+            $numero_pago = $data_pago['wpcf-numero_pago'][0];
+            $recibo_pago = $data_pago['wpcf-recibo'][0];
+            $fecha_pago = $data_pago['wpcf-fecha'][0];
+            $valor_pago = $data_pago['wpcf-valor'][0];
+            $total_pagado = $total_pagado + $valor_pago;
+            array_push($pagos_contrato, array($numero_pago, $recibo_pago, $fecha_pago, $valor_pago));
+            array_splice($pagos, $j, 1);
+            $length_pagos--;
+          }
+        }
+
+        $length_pago_contrato = count($pagos_contrato);
+        //Alimentar la tabla
+        $output = $output . '<tr><td>' . $contrato_id
+        . '</td><td>' . '</td><td>' . '</td>';
+        for($k = 0; $k < 3; $k++){
+          if($k < $length_pago_contrato){
+            $numero_pago = $pagos_contrato[$k][0];
+            $recibo_pago = $pagos_contrato[$k][1];
+            $fecha_pago = $pagos_contrato[$k][2];
+            $fecha_pago = date("F j, Y", $fecha_pago);
+            $valor_pago = $pagos_contrato[$k][3];
+            $output = $output . '<td>' . $recibo_pago . '</td><td>' . $fecha_pago . '</td><td>' . $valor_pago . '</td>';
+          } else {
+            $output = $output . '<td>' . '</td><td>' . '</td><td>' . '</td>';
+          }
+        }
+
+        //Obtener Precios de Ventas
+        $stands_cont = 0;
+
+        for($j = 0; $j < $length_stands; $j++){
+          //Obtener numero de stands
+          $data_stand = $stands[$j][1];
+          if($data_stand['_wpcf_belongs_contratos_id'][0] == $contrato_id) {
+            $stands_cont++;
+            array_splice($stands, $j, 1);
+            $length_stands--;
+          }
+        }
+
+        $feria_id = $data_contrato['_wpcf_belongs_feria_id'][0];
+        $feria = get_from_table('feria', $feria_id);
+        $tipo_de_cambio = 0;
+        $precio_metro_cuadrado = 0;
+        if(!validate_null('Feria ' . $feria_id . ' no existe', $feria)){
+          $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
+          $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0];
+        }
+        $m2_stand = 9;
+        $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado) - $total_pagado;
+
+        $output = $output . '<td>' . $valor_por_cobrar . '</td></tr>';
+      }
+
+      $output = $output . '</table>';
+
+      return $output;
+    }
+
     function get_from_table( $table, $id ){
       $dbTable = get_table($table, 'publish', -1);
       $length_table = count($dbTable);
