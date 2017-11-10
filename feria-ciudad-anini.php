@@ -169,9 +169,9 @@
               <tr>
                   <th> </th>
                   <th colspan="2">POSTFECHADOS</th>
-                  <th colspan="4">PRIMER PAGO</th>
-                  <th colspan="4">SEGUNDO PAGO</th>
-                  <th colspan="4">TERCER PAGO</th>
+                  <th colspan="3">PRIMER PAGO</th>
+                  <th colspan="3">SEGUNDO PAGO</th>
+                  <th colspan="3">TERCER PAGO</th>
                   <th> </th>
               </tr>
               <tr>
@@ -231,6 +231,7 @@
             $numero_pago = $pagos_contrato[$k][0];
             $recibo_pago = $pagos_contrato[$k][1];
             $fecha_pago = $pagos_contrato[$k][2];
+            $fecha_pago = date("F j, Y", $fecha_pago);
             $valor_pago = $pagos_contrato[$k][3];
             $output = $output . '<td>' . $recibo_pago . '</td><td>' . $fecha_pago . '</td><td>' . $valor_pago . '</td>';
           } else {
@@ -260,7 +261,7 @@
           $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0];
         }
         $m2_stand = 9;
-        $valor_por_cobrar = $total_pagado - ($stands_cont * $m2_stand * $precio_metro_cuadrado)
+        $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado) - $total_pagado;
 
         $output = $output . '<td>' . $valor_por_cobrar . '</td></tr>';
       }
