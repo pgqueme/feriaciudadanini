@@ -1,0 +1,112 @@
+Salones ('salon'):
+wpcf-nombre_salones: Salón 2<br/>
+wpcf-metros_largo: 20
+wpcf-metros_ancho: 20
+_wpcf_belongs_feria_id: 15
+
+Stand ('stand'):
+wpcf-numero_stands: 1
+wpcf-x: 0
+wpcf-y: 0
+_wpcf_belongs_contratos_id: 493
+_wpcf_belongs_salon_id: 517
+
+Contrato ('contratos'):
+wpcf-nombre-cenefa: CENEFA 502
+wpcf-porcentaje-de-descuento: 10
+wpcf-observaciones:
+_wpcf_belongs_feria_id: 15
+_wpcf_belongs_vendedor_id: 260
+_wpcf_belongs_expositor_id: 50
+
+Feria ('feria'):
+wpcf-anio: 2017
+wpcf-tipo_cambio: 7.50
+wpcf-nombre_recinto: Parque de la Industria
+wpcf-precio_metro_cuadrado: 144.444444
+wpcf-precio_ticket: 25
+_wpcf_belongs_organizadores_id: 21
+
+Vendedor ('vendedor'):
+wpcf-correo: pedro@gmail.com
+wpcf-nombre_completo_vendedores: Pedro Daniel
+wpcf-telefono_vendedor: 5577104
+
+Comision ('comision'):
+wpcf-nombre: Otro salario
+wpcf-porcentaje: 4
+
+Contratos_Vendedores ('contrato_vendedor'):
+_wpcf_belongs_feria_id: 15
+_wpcf_belongs_comision_id: 16
+_wpcf_belongs_vendedor_id: 260
+
+Expositores ('expositor'):
+wpcf-empresa_expositores: URL
+wpcf-direccion_expositores: Zona 16 Blv. Rafael Landívar
+wpcf-ciudad_expositores: Guatemala
+wpcf-pais_expositores: Guatemala
+wpcf-telefono_expositores: 30097005
+wpcf-email_expositores: pgqueme@url.edu.gt
+pcf-website_expositores: https://www.url.edu.gt
+wpcf-nit_expositores: 123456
+wpcf-zip-code_expositores: 01016
+wpcf-skype_expositores: a:4:{s:9:"skypename";s:0:"";s:6:"action";s:4:"chat";s:5:"color";s:4:"blue";s:4:"size";s:2:"32";}
+wpcf-idioma_expositores: Español
+_wpcf_belongs_representante-legal_id: 510
+_wpcf_belongs_responsable_id: 509
+
+Organizadores ('organizadores'):
+wpcf-empresa: Asociación del Niño por el Niño, ANINI
+wpcf-direccion: 4ta. Avenida 11-39 zona 9
+wpcf-ciudad: Guatemala
+wpcf-pais: Guatemala
+wpcf-website: http://www.feriaciudadanini.org
+wpcf-nombre_completo_organizador: Nery Mauricio Gularte Bocanegra
+wpcf-cargo: Presidente y Gerente General
+wpcf-email_persona: mauriciogularte@feriaciudadanini.org
+wpcf-tipo_documento: DPI
+wpcf-numero_documento: 1623487110101
+wpcf-movil: (502) 4565 1680
+wpcf-telefono_persona: (502) 2494-0700
+wpcf-skype: a:4:{s:9:"skypename";s:39:"servicioalcliente1@feriaciudadanini.org";s:6:"action";s:4:"chat";s:5:"color";s:4:"blue";s:4:"size";s:2:"32";}
+wpcf-telefono_empresa: (502) 2494-0700
+wpcf-email_empresa: info@feriaciudadanini.org
+wpcf-recinto_ferial: Parque De La Industria. 8a. calle 2-33 Z. 9, GT
+
+Pagos ('pago'):
+wpcf-numero_pago: 1
+wpcf-recibo: 006
+wpcf-fecha: 1510012800
+wpcf-valor: 6000
+_wpcf_belongs_contratos_id: 493
+
+Representantes_Legalse ('representante-legal'):
+wpcf-nombre-completo_representante: Pablo Guillermo Quemé García
+wpcf-cargo_representante: Desarrollador
+wpcf-email_representante: pgqueme@estudiofaser.com
+wpcf-tipo-documento_representante: DPI
+wpcf-numero-de-documento_representante: 2564555890101
+wpcf-movil_representante: 30097005
+wpcf-telefono_representante: 22220000
+wpcf-skype_representante: a:4:{s:9:"skypename";s:0:"";s:6:"action";s:4:"chat";s:5:"color";s:4:"blue";s:4:"size";s:2:"32";}
+wpcf-ciudad_representante: Guatemala
+wpcf-pais_representante: Guatemala
+
+Responsables ('responsable'):
+wpcf-nombre-completo-responsable: Ludwing Cano
+wpcf-cargo-responsable: Dueño
+wpcf-email-responsable: ludwingcano@gmail.com
+wpcf-tipo-de-documento-responsable: DPI
+wpcf-numero-de-documento-responsable: 140661213
+wpcf-movil-responsable: 65654112
+wpcf-telefono-responsable: 12314568
+wpcf-skype-responsable:
+wpcf-ciudad-responsable: Guatemala
+wpcf-pais-responsable: Guatemala
+
+Pagos_Comisiones ('pago-de-comision'):
+wpcf-numero-pago-comisiones: 32
+wpcf-valor-pago-comisiones: 250
+wpcf-fecha-pago-comisiones: 1510185600
+_wpcf_belongs_contratos_id: 354
