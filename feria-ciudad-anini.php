@@ -191,7 +191,6 @@
           <table style="width: 100%">
               <tr>
                   <th> </th>
-                  <th colspan="2">POSTFECHADOS</th>
                   <th colspan="3">PRIMER PAGO</th>
                   <th colspan="3">SEGUNDO PAGO</th>
                   <th colspan="3">TERCER PAGO</th>
@@ -199,8 +198,6 @@
               </tr>
               <tr>
                   <th>Contrato</th>
-                  <th>Fecha</th>
-                  <th>Valor</th>
                   <th>Recibo</th>
                   <th>Fecha Deposito</th>
                   <th>Valor</th>
@@ -227,6 +224,7 @@
       for($i = 0; $i < $length_contratos; $i++){
         $contrato_id = $contratos[$i][0];
         $data_contrato = $contratos[$i][1];
+        $contrato_title = $contratos[$i][2];
 
         $pagos_contrato = array(); //Arreglo que lleva control de cuantos pagos posee el contrato
         $total_pagado = 0;
@@ -247,8 +245,8 @@
 
         $length_pago_contrato = count($pagos_contrato);
         //Alimentar la tabla
-        $output = $output . '<tr><td>' . $contrato_id
-        . '</td><td>' . '</td><td>' . '</td>';
+        $output = $output . '<tr><td>' . $contrato_title
+        . '</td>';
         for($k = 0; $k < 3; $k++){
           if($k < $length_pago_contrato){
             $numero_pago = $pagos_contrato[$k][0];
@@ -256,6 +254,10 @@
             $fecha_pago = $pagos_contrato[$k][2];
             $fecha_pago = date("F j, Y", $fecha_pago);
             $valor_pago = $pagos_contrato[$k][3];
+            //Formato de Moneda
+            setlocale(LC_MONETARY, 'es_GT');
+            $valor_pago = money_format('%i', $valor_pago);
+
             $output = $output . '<td>' . $recibo_pago . '</td><td>' . $fecha_pago . '</td><td>' . $valor_pago . '</td>';
           } else {
             $output = $output . '<td>' . '</td><td>' . '</td><td>' . '</td>';
@@ -285,7 +287,9 @@
         }
         $m2_stand = 9;
         $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado) - $total_pagado;
-
+        //Formato de Moneda
+        setlocale(LC_MONETARY, 'es_GT');
+        $valor_por_cobrar = money_format('%i', $valor_por_cobrar);
         $output = $output . '<td>' . $valor_por_cobrar . '</td></tr>';
       }
 
