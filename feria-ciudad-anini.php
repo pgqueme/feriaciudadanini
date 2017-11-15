@@ -66,7 +66,7 @@
           <table style="width: 100%">
               <tr>
                   <th colspan="2">Expositor</th>
-                  <th colspan="4">Stands</th>
+                  <th colspan="3">Stands</th>
                   <th>Ventas</th>
                   <th colspan="2">Precio Unitario</th>
                   <th colspan="2">Precio Total</th>
@@ -76,7 +76,6 @@
                   <th>Nombre</th>
                   <th>Cant.</th>
                   <th>Salon</th>
-                  <th>Pabellon</th>
                   <th>No. Stand</th>
                   <th>Ejecutivo</th>
                   <th>Dolares</th>
@@ -97,6 +96,7 @@
       for($i = 0; $i < $length_contratos; $i++){
         $contrato_id = $contratos[$i][0];
         $data_contrato = $contratos[$i][1];
+        $contrato_title = $contratos[$i][2];
 
         $stands_contrato = array(); //Arreglo que lleva control de cuantos stands posee el contrato
         $length_stands_cont = 0;
@@ -141,21 +141,38 @@
         $feria = get_from_table('feria', $feria_id);
         $tipo_de_cambio;
         $precio_metro_cuadrado;
+        $unitario_dolar;
+        $unitario_quetzal;
+        $total_dolar;
+        $total_quetzal;
         if(!validate_null('Feria ' . $feria_id . ' no existe', $feria)){
           $porcentaje_descuento = (100 - $data_contrato['wpcf-porcentaje-de-descuento'][0])/100.00;
           $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
           $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0] * $porcentaje_descuento;
+          $unitario_dolar = $precio_metro_cuadrado * $tipo_de_cambio * $m2_stand;
+          $total_dolar = $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado * $tipo_de_cambio;
+
+          setlocale(LC_MONETARY, 'en_US');
+          $unitario_dolar = money_format('%i', $unitario_dolar);
+          $total_dolar = money_format('%i', $total_dolar);
+
+          $unitario_quetzal = $precio_metro_cuadrado * $m2_stand;
+          $total_quetzal = $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado;
+
+          setlocale(LC_MONETARY, 'es_GT');
+          $unitario_quetzal = money_format('%i', $unitario_quetzal);
+          $total_quetzal = money_format('%i', $total_quetzal);
         }
 
         $m2_stand = 9;
 
         //Alimentar la tabla
         for($k = 0; $k < $length_stands_cont; $k++){
-          $output = $output . '<tr><td>' . $contrato_id . '</td><td>' . $data_contrato['wpcf-nombre-cenefa'][0]
-          . '</td><td>' . $stands_contrato[$k][0] . '</td><td>' . $stands_contrato[$k][1] . '</td><td>' . $stands_contrato[$k][2] .'</td><td>' . $numero_stand
+          $output = $output . '<tr><td>' . $contrato_title . '</td><td>' . $data_contrato['wpcf-nombre-cenefa'][0]
+          . '</td><td>' . $stands_contrato[$k][0] . '</td><td>' . $stands_contrato[$k][2] .'</td><td>' . $numero_stand
           . '</td><td>' . $vendedor_name
-          . '</td><td>' . $precio_metro_cuadrado * $tipo_de_cambio * $m2_stand . '</td><td>' . $precio_metro_cuadrado * $m2_stand
-          . '</td><td>' . $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado * $tipo_de_cambio . '</td><td>' . $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado
+          . '</td><td>' . $unitario_dolar . '</td><td>' . $unitario_quetzal
+          . '</td><td>' . $total_dolar . '</td><td>' . $total_quetzal
           . '</td></tr>';
         }
       }
@@ -174,7 +191,6 @@
           <table style="width: 100%">
               <tr>
                   <th> </th>
-                  <th colspan="2">POSTFECHADOS</th>
                   <th colspan="3">PRIMER PAGO</th>
                   <th colspan="3">SEGUNDO PAGO</th>
                   <th colspan="3">TERCER PAGO</th>
@@ -182,8 +198,6 @@
               </tr>
               <tr>
                   <th>Contrato</th>
-                  <th>Fecha</th>
-                  <th>Valor</th>
                   <th>Recibo</th>
                   <th>Fecha Deposito</th>
                   <th>Valor</th>
@@ -210,6 +224,7 @@
       for($i = 0; $i < $length_contratos; $i++){
         $contrato_id = $contratos[$i][0];
         $data_contrato = $contratos[$i][1];
+        $contrato_title = $contratos[$i][2];
 
         $pagos_contrato = array(); //Arreglo que lleva control de cuantos pagos posee el contrato
         $total_pagado = 0;
@@ -230,8 +245,8 @@
 
         $length_pago_contrato = count($pagos_contrato);
         //Alimentar la tabla
-        $output = $output . '<tr><td>' . $contrato_id
-        . '</td><td>' . '</td><td>' . '</td>';
+        $output = $output . '<tr><td>' . $contrato_title
+        . '</td>';
         for($k = 0; $k < 3; $k++){
           if($k < $length_pago_contrato){
             $numero_pago = $pagos_contrato[$k][0];
@@ -239,6 +254,10 @@
             $fecha_pago = $pagos_contrato[$k][2];
             $fecha_pago = date("F j, Y", $fecha_pago);
             $valor_pago = $pagos_contrato[$k][3];
+            //Formato de Moneda
+            setlocale(LC_MONETARY, 'es_GT');
+            $valor_pago = money_format('%i', $valor_pago);
+
             $output = $output . '<td>' . $recibo_pago . '</td><td>' . $fecha_pago . '</td><td>' . $valor_pago . '</td>';
           } else {
             $output = $output . '<td>' . '</td><td>' . '</td><td>' . '</td>';
@@ -268,7 +287,9 @@
         }
         $m2_stand = 9;
         $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado) - $total_pagado;
-
+        //Formato de Moneda
+        setlocale(LC_MONETARY, 'es_GT');
+        $valor_por_cobrar = money_format('%i', $valor_por_cobrar);
         $output = $output . '<td>' . $valor_por_cobrar . '</td></tr>';
       }
 
@@ -328,8 +349,10 @@
           $post = get_post( $post_id );
           //Obtener los campos del registro
           $metadata = get_post_meta($post_id);
+          //Obtener titulo
+          $title = $post->post_title;
 
-          $info_array = array($post_id, $metadata);
+          $info_array = array($post_id, $metadata, $title);
           //Guardar los registros en $contratos
           array_push($array, $info_array);
       }
