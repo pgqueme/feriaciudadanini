@@ -10,10 +10,18 @@
   */
 
     define("ABS_PATH", dirname(__FILE__));
+    require_once dirname(__FILE__) . '/excel.php';
+    require_once dirname(__FILE__) . '/contrato.php';
+    require_once dirname(__FILE__) . '/expositor.php';
+    require_once dirname(__FILE__) . '/pagos.php';
 
     //Registrar el shortcode, primero va el nombre y luego el nombre de la función
     add_shortcode('tabla1', 'generar_tabla1');
+	add_shortcode('tabla_contrato_vendedor', 'generar_contrato_vendedor');
     add_shortcode('tabla_contrato_stand', 'generar_contrato_stand');
+    add_shortcode('tabla_contrato_representante', 'generar_contrato_representante');
+	add_shortcode('tabla_contrato_pagos', 'generar_contrato_pagos');
+
 
     function generar_tabla1($attributes) {
         //Array que va a contener todos los registros
@@ -56,6 +64,210 @@
         return $output;
     }
 
+
+
+
+	//----CONTRATO RELACIONADO VENDEDORES
+	 function generar_contrato_vendedor($attributes) {
+
+      $contratos_stand = [];
+      $vendedores = []; //Arreglo auxiliar que va a almacenar temporalmente el listado de stands
+
+      //Texto HTML que se va a mostrar en la página
+      $output = '
+          <table style="width: 100%">
+              <tr>
+                  <th colspan="3">Contrato</th>
+                  <th>Vendedor</th>
+              </tr>
+              <tr>
+                  <th>ID</th>
+                  <th>Nombre cenefa</th>
+                  <th>Porcentaje de descuento</th>
+                  <th>Nombre Vendedor</th>
+              </tr>
+      ';
+
+      //Obtener tablas
+      $contratos = get_table('contratos', 'publish', -1);
+      $vendedores = get_table('vendedor', 'publish', -1);
+
+      $length_contratos = count($contratos);
+      $length_vendedores = count($vendedores);
+	  
+	  
+	   //console_log('CONTRATOSXXXXXXXXX' . $length_contratos);
+	  //console_log('VENDEDORESXXXXXXXXX' . $length_vendedores);
+
+	  // RECORRE VENDEDORES 
+      for($i = 0; $i < $length_vendedores; $i++){
+        $vendedor_id = $vendedores[$i][0];
+        $data_vendedor= $vendedores[$i][1];
+        //console_log('vendedor ' . $vendedor_id);
+		 //print_metadata($data_vendedor);
+        for($j = 0; $j < $length_contratos; $j++){
+          //Obtener contratos
+          $data_contrato = $contratos[$j][1];
+		  //print_metadata($data_contrato);
+          if($data_contrato['_wpcf_belongs_vendedor_id'][0] == $vendedor_id) {
+              $contratoid = $contratos[$j][0];
+			  $nombre_cenefa = $data_contrato['wpcf-nombre-cenefa'][0];
+			  $porcentaje = $data_contrato['wpcf-porcentaje-de-descuento'][0];
+              //Alimentar la tabla
+              $output = $output . '<tr><td>' . $contratoid . '</td><td>' . $nombre_cenefa . '</td><td>' . $porcentaje . '</td><td>' . $data_vendedor['wpcf-nombre_completo_vendedores'][0] . '</td></tr>';
+              array_splice($vendedores, $j, 1);
+          }
+        }
+      }
+
+      $output = $output . '</table>';
+
+      return $output;
+    }
+	//---------------------
+
+
+
+
+
+
+	
+
+// REPRESENTANTE LEGAL -> EXPOSITOR -> CONTRATO
+  function generar_contrato_representante($attributes) {
+
+      $contratos_stand = [];
+      $representante = []; 
+
+      //HTML PARA LATABLE
+      $output = '
+          <table style="width: 100%">
+              <tr>		 
+                  <th colspan="6">REPRESENTANTE LEGAL</th>
+				  <th colspan="1">EXPOSITOR</th>
+				  <th colspan="1">CONTRATO</th>
+				  <th colspan="1">FERIA</th>
+              </tr>
+              <tr>
+			      
+                  <th>NOMBRE COMPLETO REPRESENTANTE LEG.</th>
+                  <th>NOMBRE COMPLETO ENCARGADO STAND</th>
+                  <th>CELULAR</th>
+				  <th>TELEFONO</th>
+				  <th>EMAIL</th>
+				  <th>PAIS</th>	   
+				  <th>EMPRESA</th>
+				  <th>NOMBRE EN LA CENEFA DEL STAND</th>
+				  <th>FERIA</th>
+              </tr>
+      ';
+
+      //OBTENER LAS 3 TABLAS   
+      $representante = get_table('representante-legal', 'publish', -1);
+	  $expositor = get_table('expositor', 'publish', -1);
+	  $contratos = get_table('contratos', 'publish', -1);
+	  $feria = get_table('feria', 'publish', -1);
+
+	  $length_representante = count($representante);
+	  $length_expositor = count($expositor);
+      $length_contratos = count($contratos);
+	  $length_feria = count($feria);
+      
+
+      for($i = 0; $i < $length_representante; $i++){
+        $representante_id = $representante[$i][0];
+        $data_representante = $representante[$i][1];
+       
+        for($j = 0; $j < $length_expositor; $j++){
+          $expositor_id = $expositor[$j][0];
+          $data_expositor = $expositor[$j][1];
+		  
+          if($data_expositor['_wpcf_belongs_representante-legal_id'][0] == $representante_id) {
+             
+				 for($z = 0; $z < $length_contratos; $z++){
+				  $contrato_id = $contratos[$z][0];
+                  $data_contrato = $contratos[$z][1];
+				 
+						if($data_contrato['_wpcf_belongs_expositor_id'][0] == $expositor_id) {
+						
+						//VARIABLE FERIA
+						$feria_nombre = '-';
+						
+						// RECORRER FERIA Y TRAER NOMBRE Y ID
+						for($g = 0; $g < $length_feria; $g++){
+							$feria_id = $feria[$g][0];
+							$data_feria = $feria[$g][1];
+							
+							//echo '<script language="javascript">alert("' . $data_feria['wpcf-post_title'][0]  .'");</script>';
+
+							if($data_contrato['_wpcf_belongs_feria_id'][0] == $feria_id) {
+								
+								//$feria_nombre = $data_feria['_wpcf-post_title'][0];
+								$feria_nombre = $feria_id;
+								//echo '<script language="javascript">alert("' . $feria_nombre  .'");</script>'; 
+							}
+						}
+						
+						
+						
+						  
+						  //LLENA VARIABLES REPRESENTANTE
+						  $representante_nombre = $data_representante['wpcf-nombre-completo_representante'][0];
+						  $representante_email = $data_representante['wpcf-email_representante'][0];
+						  $representante_celular = $data_representante['wpcf-movil_representante'][0];
+						  $representante_telefono = $data_representante['wpcf-telefono_representante'][0];
+						  $representante_pais = $data_representante['wpcf-pais_representante'][0];
+						  $representante_encargado = $data_representante['wpcf-nombre-completo_representante'][0];
+						  
+						  //LLEVA VARIABLES EXPOSITOR
+						  $expositor_empresa = $data_expositor['wpcf-empresa_expositores'][0];
+						  
+						  //LLENA VARIABLES CONTRATO
+						  $contrato_cenefa = $data_contrato['wpcf-nombre-cenefa'][0];
+						  
+						  //ALIMENTA TABLA
+						  $output = $output . '<tr><td>' . $representante_nombre . '</td><td>' . $representante_encargado . '</td><td>' . $representante_celular . '</td><td>' . $representante_telefono . '</td><td>' . $representante_email . '</td><td>' .  $representante_pais .  '</td><td>' .  $expositor_empresa . '</td><td>'.  $contrato_cenefa . '</td><td>'.  $feria_nombre . '</td></tr>';
+						  array_splice($data_contrato, $z, 1);
+						
+																	
+						}
+				 				 
+				 }
+
+          }
+        }
+      }
+
+      $output = $output . '</table>';
+
+      return $output;
+    }
+
+//--------- FIN  REPRESENTANTE LEGAL -> EXPOSITOR -> CONTRATO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CONTRATO RELACIONADO STAND
     function generar_contrato_stand($attributes) {
 
       $contratos_stand = [];
@@ -181,8 +393,10 @@
 
       return $output;
     }
+//--------- FIN  CONTRATO RELACIONADO STAND
 
-    function generar_contrato_pagos($attributes){
+//CONTRATO RELACIONADO CON PAGOS
+  function generar_contrato_pagos($attributes){
       $contratos_stand = [];
       $stands = []; //Arreglo auxiliar que va a almacenar temporalmente el listado de stands
 
@@ -297,6 +511,7 @@
 
       return $output;
     }
+// --------------FIN CONTRATO RELACIONADO CON PAGOS
 
     function get_from_table( $table, $id ){
       $dbTable = get_table($table, 'publish', -1);
@@ -322,7 +537,6 @@
       return false;
     }
 
-    //Imprime en la consola del explorador
     function console_log( $data ) {
       $output  = "<script>console.log( 'PHP debugger: ";
       $output .= json_encode(print_r($data, true));
@@ -330,9 +544,8 @@
       echo $output;
     }
 
-    //Obtener tabla de la DB
     function get_table($post_type, $post_status, $posts_per_page) {
-      $array = [];
+       $array = [];
       //Armar la consulta
       $query = new WP_Query(array(
           'post_type' => $post_type,
