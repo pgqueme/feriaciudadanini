@@ -322,8 +322,8 @@
               //Recorrer lista de salones existentes en el contrato_id
               $existe_salon = false;
               for($k = 0; $k < $length_stands_cont; $k++){
-                  if($stands_contrato[$k][1] == $salon_id){
-                    $stands_contrato[$k][0]++;
+                  if($stands_contrato[$k][1] == $salon_id && $numero_stand == $stands_contrato[$k][2]){
+                    $stands_contrato[$k][0]=$stands_contrato[$k][0]+1;
                     $k = $length_stands_cont; //Permite salir del ciclo
                     $existe_salon = true;
                   }
@@ -331,11 +331,12 @@
               if(!$existe_salon){
                 $salon = get_from_table('salon', $salon_id);
                 if(!validate_null('Salon ' . $salon_id . ' no existe', $salon)){
-                  array_push($stands_contrato, array(1, $salon_id, $salon['wpcf-nombre_salones'][0]));
+                  array_push($stands_contrato, array(1, $salon_id, $salon['wpcf-nombre_salones'][0], $numero_stand, $data_stand['wpcf-x'][0], $data_stand['wpcf-y'][0]));
                   $length_stands_cont++;
                 }
               }
               array_splice($stands, $j, 1);
+        $j--;
               $length_stands--;
           }
         }
@@ -357,31 +358,34 @@
         $unitario_quetzal;
         $total_dolar;
         $total_quetzal;
+    $m2_stand = 1;
         if(!validate_null('Feria ' . $feria_id . ' no existe', $feria)){
-          $porcentaje_descuento = (100 - $data_contrato['wpcf-porcentaje-de-descuento'][0])/100.00;
+          $porcentaje_descuento = $data_contrato['wpcf-porcentaje-de-descuento'][0]/100.00;
           $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
           $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0] * $porcentaje_descuento;
-          $unitario_dolar = $precio_metro_cuadrado * $tipo_de_cambio * $m2_stand;
-          $total_dolar = $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado * $tipo_de_cambio;
-
+          $unitario_quetzal = $precio_metro_cuadrado * $tipo_de_cambio * $m2_stand;
+          $total_quetzal = $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado * $tipo_de_cambio;
+          $unitario_dolar = $precio_metro_cuadrado * $m2_stand;
+          $total_dolar = $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado;
+        }
+    
+        //Alimentar la tabla
+        for($k = 0; $k < $length_stands_cont; $k++){
+      $metros_cuadrados = $stands_contrato[$k][4] * $stands_contrato[$k][5];
+      $unitario_dolar = $unitario_dolar * $metros_cuadrados;
+      $unitario_quetzal = $unitario_quetzal * $metros_cuadrados;
+      $total_dolar = $total_dolar * $metros_cuadrados;
+      $total_quetzal = $total_quetzal * $metros_cuadrados;
           setlocale(LC_MONETARY, 'en_US');
           $unitario_dolar = money_format('%i', $unitario_dolar);
           $total_dolar = money_format('%i', $total_dolar);
 
-          $unitario_quetzal = $precio_metro_cuadrado * $m2_stand;
-          $total_quetzal = $stands_contrato[$k][0] * $m2_stand * $precio_metro_cuadrado;
-
           setlocale(LC_MONETARY, 'es_GT');
           $unitario_quetzal = money_format('%i', $unitario_quetzal);
           $total_quetzal = money_format('%i', $total_quetzal);
-        }
 
-        $m2_stand = 9;
-
-        //Alimentar la tabla
-        for($k = 0; $k < $length_stands_cont; $k++){
           $output = $output . '<tr><td>' . $contrato_title . '</td><td>' . $data_contrato['wpcf-nombre-cenefa'][0]
-          . '</td><td>' . $stands_contrato[$k][0] . '</td><td>' . $stands_contrato[$k][2] .'</td><td>' . $numero_stand
+          . '</td><td>' . $stands_contrato[$k][0] . '</td><td>' . $stands_contrato[$k][2] .'</td><td>' . $stands_contrato[$k][3]
           . '</td><td>' . $vendedor_name
           . '</td><td>' . $unitario_dolar . '</td><td>' . $unitario_quetzal
           . '</td><td>' . $total_dolar . '</td><td>' . $total_quetzal
@@ -397,7 +401,7 @@
 
 //CONTRATO RELACIONADO CON PAGOS
   function generar_contrato_pagos($attributes){
-      $contratos_stand = [];
+          $contratos_stand = [];
       $stands = []; //Arreglo auxiliar que va a almacenar temporalmente el listado de stands
 
       //Texto HTML que se va a mostrar en la página
@@ -453,6 +457,7 @@
             $total_pagado = $total_pagado + $valor_pago;
             array_push($pagos_contrato, array($numero_pago, $recibo_pago, $fecha_pago, $valor_pago));
             array_splice($pagos, $j, 1);
+      $j--;
             $length_pagos--;
           }
         }
@@ -487,6 +492,7 @@
           if($data_stand['_wpcf_belongs_contratos_id'][0] == $contrato_id) {
             $stands_cont++;
             array_splice($stands, $j, 1);
+        $j--;
             $length_stands--;
           }
         }
@@ -499,7 +505,7 @@
           $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
           $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0];
         }
-        $m2_stand = 9;
+        $m2_stand = 1;
         $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado) - $total_pagado;
         //Formato de Moneda
         setlocale(LC_MONETARY, 'es_GT');
