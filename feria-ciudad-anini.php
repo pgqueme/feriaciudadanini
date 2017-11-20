@@ -269,7 +269,6 @@
 
 // CONTRATO RELACIONADO STAND
     function generar_contrato_stand($attributes) {
-
       $contratos_stand = [];
       $stands = []; //Arreglo auxiliar que va a almacenar temporalmente el listado de stands
 
@@ -402,7 +401,7 @@
 
 //CONTRATO RELACIONADO CON PAGOS
   function generar_contrato_pagos($attributes){
-          $contratos_stand = [];
+      $contratos_stand = [];
       $stands = []; //Arreglo auxiliar que va a almacenar temporalmente el listado de stands
 
       //Texto HTML que se va a mostrar en la página
@@ -458,7 +457,7 @@
             $total_pagado = $total_pagado + $valor_pago;
             array_push($pagos_contrato, array($numero_pago, $recibo_pago, $fecha_pago, $valor_pago));
             array_splice($pagos, $j, 1);
-      $j--;
+            $j--;
             $length_pagos--;
           }
         }
@@ -493,7 +492,7 @@
           if($data_stand['_wpcf_belongs_contratos_id'][0] == $contrato_id) {
             $stands_cont++;
             array_splice($stands, $j, 1);
-        $j--;
+            $j--;
             $length_stands--;
           }
         }
@@ -502,12 +501,13 @@
         $feria = get_from_table('feria', $feria_id);
         $tipo_de_cambio = 0;
         $precio_metro_cuadrado = 0;
+        $porcentaje_descuento = (100-$data_contrato['wpcf-porcentaje-de-descuento'][0])/100.00;
         if(!validate_null('Feria ' . $feria_id . ' no existe', $feria)){
           $tipo_de_cambio = $feria['wpcf-tipo_cambio'][0];
-          $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0];
+          $precio_metro_cuadrado = $feria['wpcf-precio_metro_cuadrado'][0] * $porcentaje_descuento;
         }
-        $m2_stand = 1;
-        $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado) - $total_pagado;
+        $m2_stand = 9;
+        $valor_por_cobrar = ($stands_cont * $m2_stand * $precio_metro_cuadrado * $tipo_de_cambio) - $total_pagado;
         //Formato de Moneda
         setlocale(LC_MONETARY, 'es_GT');
         $valor_por_cobrar = money_format('%i', $valor_por_cobrar);
